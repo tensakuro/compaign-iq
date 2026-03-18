@@ -1,6 +1,6 @@
 # ============================================================
 # app.py — CampaignIQ Main Entry Point
-# Premium UI: Glassmorphism + Animated Gradients
+# Premium UI + working page navigation
 # ============================================================
 
 import streamlit as st
@@ -33,65 +33,45 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; }
 
 .stApp {
     background: #050810;
     font-family: 'DM Sans', sans-serif;
 }
-
-/* ── Animated mesh background ── */
 .stApp::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
     background:
         radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.15) 0%, transparent 60%),
         radial-gradient(ellipse 60% 80% at 80% 80%, rgba(16,185,129,0.10) 0%, transparent 60%),
         radial-gradient(ellipse 50% 50% at 50% 50%, rgba(245,158,11,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
     animation: meshPulse 8s ease-in-out infinite alternate;
 }
-@keyframes meshPulse {
-    0%   { opacity: 0.7; }
-    100% { opacity: 1; }
-}
+@keyframes meshPulse { 0% { opacity:0.7; } 100% { opacity:1; } }
 
-/* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: rgba(10,12,24,0.95) !important;
     border-right: 1px solid rgba(99,102,241,0.2) !important;
-    backdrop-filter: blur(20px);
 }
 [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
 
-/* ── Hide Streamlit chrome ── */
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stDecoration"] { display: none; }
 
-/* ── Typography ── */
-h1, h2, h3, .brand-title {
-    font-family: 'Syne', sans-serif !important;
-    letter-spacing: -0.02em;
-}
+h1, h2, h3 { font-family: 'Syne', sans-serif !important; letter-spacing: -0.02em; }
 
-/* ── Glass card ── */
-.glass-card {
+[data-testid="stMetric"] {
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 24px;
-    backdrop-filter: blur(12px);
-    transition: border-color 0.3s ease, transform 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 16px !important;
 }
-.glass-card:hover {
-    border-color: rgba(99,102,241,0.4);
-    transform: translateY(-2px);
-}
+[data-testid="stMetricValue"] { font-family:'Syne',sans-serif!important; font-size:22px!important; color:#F1F5F9!important; }
+[data-testid="stMetricLabel"] { color:#64748B!important; font-size:12px!important; }
 
-/* ── KPI card ── */
+hr { border:none!important; border-top:1px solid rgba(255,255,255,0.06)!important; }
+
 .kpi-card {
     background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(16,185,129,0.06));
     border: 1px solid rgba(99,102,241,0.25);
@@ -104,217 +84,74 @@ h1, h2, h3, .brand-title {
 }
 .kpi-card::before {
     content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    position: absolute; top:0; left:0; right:0; height:2px;
     background: linear-gradient(90deg, #6366F1, #10B981, #F59E0B);
     opacity: 0.8;
 }
-.kpi-card:hover {
-    border-color: rgba(99,102,241,0.5);
-    transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(99,102,241,0.15);
-}
-.kpi-icon  { font-size: 26px; margin-bottom: 8px; }
-.kpi-value { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #F1F5F9; }
-.kpi-label { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+.kpi-card:hover { border-color:rgba(99,102,241,0.5); transform:translateY(-3px); box-shadow:0 20px 40px rgba(99,102,241,0.15); }
+.kpi-icon  { font-size:26px; margin-bottom:8px; }
+.kpi-value { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#F1F5F9; }
+.kpi-label { font-size:11px; color:#64748B; text-transform:uppercase; letter-spacing:1.5px; margin-top:4px; }
 
-/* ── Hero title ── */
 .hero-title {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(42px, 6vw, 72px);
-    font-weight: 800;
+    font-size: clamp(42px, 6vw, 72px); font-weight: 800;
     background: linear-gradient(135deg, #F1F5F9 30%, #6366F1 60%, #10B981 90%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin: 0;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1.1; letter-spacing: -0.03em; margin: 0;
 }
-.hero-sub {
-    font-size: 18px;
-    color: #64748B;
-    margin-top: 16px;
-    font-weight: 300;
-    letter-spacing: 0.01em;
-}
+.hero-sub { font-size:18px; color:#64748B; margin-top:16px; font-weight:300; }
 
-/* ── Status badge ── */
-.badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-.badge-success { background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); }
-.badge-warning { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
-.badge-danger  { background: rgba(239,68,68,0.15);  color: #EF4444; border: 1px solid rgba(239,68,68,0.3);  }
+.badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
+.badge-success { background:rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); }
+.badge-warning { background:rgba(245,158,11,0.15); color:#F59E0B; border:1px solid rgba(245,158,11,0.3); }
+.badge-danger  { background:rgba(239,68,68,0.15);  color:#EF4444; border:1px solid rgba(239,68,68,0.3); }
 
-/* ── Metric overrides ── */
-[data-testid="stMetric"] {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px;
-    padding: 16px !important;
-}
-[data-testid="stMetricValue"] {
-    font-family: 'Syne', sans-serif !important;
-    font-size: 22px !important;
-    color: #F1F5F9 !important;
-}
-[data-testid="stMetricLabel"] { color: #64748B !important; font-size: 12px !important; }
+.alert-critical { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #EF4444; border-radius:10px; padding:14px 18px; color:#FCA5A5; font-size:14px; margin:8px 0; }
+.alert-warning  { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-left:4px solid #F59E0B; border-radius:10px; padding:14px 18px; color:#FCD34D; font-size:14px; margin:8px 0; }
+.alert-success  { background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-left:4px solid #10B981; border-radius:10px; padding:14px 18px; color:#6EE7B7; font-size:14px; margin:8px 0; }
 
-/* ── Divider ── */
-hr {
-    border: none !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
-    margin: 20px 0 !important;
-}
+.sidebar-brand { text-align:center; padding:12px 0 20px; }
+.sidebar-logo  { font-size:40px; display:block; margin-bottom:8px; filter:drop-shadow(0 0 20px rgba(99,102,241,0.6)); }
+.sidebar-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:#F1F5F9; letter-spacing:-0.02em; }
+.sidebar-sub   { font-size:11px; color:#4B5563; letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
 
-/* ── Sidebar brand ── */
-.sidebar-brand {
-    text-align: center;
-    padding: 12px 0 20px;
-}
-.sidebar-logo {
-    font-size: 40px;
-    display: block;
-    margin-bottom: 8px;
-    filter: drop-shadow(0 0 20px rgba(99,102,241,0.6));
-}
-.sidebar-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #F1F5F9;
-    letter-spacing: -0.02em;
-}
-.sidebar-sub {
-    font-size: 11px;
-    color: #4B5563;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 4px;
-}
-
-/* ── Buttons ── */
 .stButton > button {
     background: linear-gradient(135deg, #6366F1, #4F46E5) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.3px !important;
+    color: white !important; border: none !important; border-radius: 10px !important;
+    font-family: 'DM Sans', sans-serif !important; font-weight: 500 !important;
     transition: all 0.2s ease !important;
     box-shadow: 0 4px 15px rgba(99,102,241,0.3) !important;
 }
-.stButton > button:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 8px 25px rgba(99,102,241,0.4) !important;
+.stButton > button:hover { transform:translateY(-1px)!important; box-shadow:0 8px 25px rgba(99,102,241,0.4)!important; }
+
+/* page_link button styling */
+[data-testid="stPageLink"] a {
+    background: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+    color: #E2E8F0 !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+[data-testid="stPageLink"] a:hover {
+    border-color: rgba(99,102,241,0.4) !important;
+    background: rgba(99,102,241,0.08) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3) !important;
 }
 
-/* ── Feature grid ── */
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin: 16px 0;
-}
-.feature-item {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 13px;
-    color: #94A3B8;
-    transition: all 0.2s;
-}
-.feature-item:hover {
-    background: rgba(99,102,241,0.08);
-    border-color: rgba(99,102,241,0.25);
-    color: #CBD5E1;
-}
-.feature-item strong { color: #E2E8F0; display: block; margin-bottom: 3px; font-size: 13px; }
+.stat-strip  { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+.stat-chip   { background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:20px; padding:4px 12px; font-size:12px; color:#A5B4FC; }
 
-/* ── Alert boxes ── */
-.alert-critical {
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.3);
-    border-left: 4px solid #EF4444;
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: #FCA5A5;
-    font-size: 14px;
-    margin: 8px 0;
-}
-.alert-warning {
-    background: rgba(245,158,11,0.08);
-    border: 1px solid rgba(245,158,11,0.3);
-    border-left: 4px solid #F59E0B;
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: #FCD34D;
-    font-size: 14px;
-    margin: 8px 0;
-}
-.alert-success {
-    background: rgba(16,185,129,0.08);
-    border: 1px solid rgba(16,185,129,0.3);
-    border-left: 4px solid #10B981;
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: #6EE7B7;
-    font-size: 14px;
-    margin: 8px 0;
-}
-
-/* ── Nav cards ── */
-.nav-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-.nav-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #6366F1, #10B981);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-.nav-card:hover { border-color: rgba(99,102,241,0.35); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
-.nav-card:hover::after { transform: scaleX(1); }
-.nav-icon  { font-size: 28px; margin-bottom: 10px; }
-.nav-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #E2E8F0; }
-.nav-desc  { font-size: 11px; color: #4B5563; margin-top: 4px; }
-
-/* ── Stat strip ── */
-.stat-strip {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin: 12px 0;
-}
-.stat-chip {
-    background: rgba(99,102,241,0.1);
-    border: 1px solid rgba(99,102,241,0.2);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    color: #A5B4FC;
-}
+.feature-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:16px 0; }
+.feature-item { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px 16px; font-size:13px; color:#94A3B8; }
+.feature-item strong { color:#E2E8F0; display:block; margin-bottom:3px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -341,7 +178,7 @@ SAMPLE_PATH = "data/sales_data.csv"
 
 def validate_upload(uploaded_file) -> tuple:
     if uploaded_file.size / 1024 / 1024 > MAX_FILE_MB:
-        return False, (f"File too large ({uploaded_file.size/1024/1024:.1f} MB). Max {MAX_FILE_MB} MB.")
+        return False, f"File too large ({uploaded_file.size/1024/1024:.1f} MB). Max {MAX_FILE_MB} MB."
     name = uploaded_file.name.lower()
     if not (name.endswith(".csv") or name.endswith(".xlsx")):
         return False, "Only CSV and Excel (.xlsx) files accepted."
@@ -448,7 +285,8 @@ with st.sidebar:
     else:
         load_and_process(use_sample=True)
         if st.session_state.df_clean is not None:
-            st.markdown("<div class='badge badge-success'>✓ Sample data loaded</div>", unsafe_allow_html=True)
+            st.markdown("<div class='badge badge-success'>✓ Sample data loaded</div>",
+                        unsafe_allow_html=True)
 
     df = st.session_state.df_clean
     if df is not None:
@@ -473,7 +311,7 @@ with st.sidebar:
 
         cr = st.session_state.clean_report
         if cr:
-            with st.expander("🔍 Data Quality Report", expanded=False):
+            with st.expander("🔍 Data Quality", expanded=False):
                 st.caption(f"Rows before: **{cr.get('rows_before',0):,}**")
                 st.caption(f"Rows after:  **{cr.get('rows_after',0):,}**")
                 st.caption(f"Duplicates:  **{cr.get('duplicates',0):,}**")
@@ -488,45 +326,41 @@ with st.sidebar:
                            help="aistudio.google.com — 1,500/day free")
         if gk:
             st.session_state["GEMINI_API_KEY"] = gk
-            st.markdown("<div class='badge badge-success'>✓ Gemini active</div>", unsafe_allow_html=True)
+            st.markdown("<div class='badge badge-success'>✓ Gemini active</div>",
+                        unsafe_allow_html=True)
         qk = st.text_input("Groq API Key", type="password",
                            placeholder="gsk_...",
                            help="console.groq.com — 100/day free")
         if qk:
             st.session_state["GROQ_API_KEY"] = qk
-            st.markdown("<div class='badge badge-success'>✓ Groq active</div>", unsafe_allow_html=True)
+            st.markdown("<div class='badge badge-success'>✓ Groq active</div>",
+                        unsafe_allow_html=True)
 
     st.divider()
-    st.markdown("**🗺 Pages**")
-    st.markdown("""
-<small>
-🏠 [Home](/) &nbsp;·&nbsp;
-📊 [Dashboard](/01_dashboard) &nbsp;·&nbsp;
-🤖 [AI Insights](/02_ai_insights)<br>
-💡 [Recommendations](/03_recommendations) &nbsp;·&nbsp;
-📥 [Export](/04_export)
-</small>
-""", unsafe_allow_html=True)
+    st.markdown("**🗺 Navigation**")
+    st.page_link("app.py",                          label="🏠 Home")
+    st.page_link("pages/01_dashboard.py",           label="📊 Dashboard")
+    st.page_link("pages/02_ai_insights.py",         label="🤖 AI Insights")
+    st.page_link("pages/03_recommendations.py",     label="💡 Recommendations")
+    st.page_link("pages/04_export.py",              label="📥 Export")
 
 # ── Main ──────────────────────────────────────────────────────
 if st.session_state.df_clean is None:
     # ── Hero ──
     st.markdown("""
-    <div style='padding: 60px 0 40px; position: relative;'>
+    <div style='padding:60px 0 40px'>
         <p class='hero-title'>Campaign<br>Intelligence.</p>
         <p class='hero-sub'>Upload your sales data — get instant, AI-powered campaign insights.</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Feature cards ──
     c1, c2, c3, c4 = st.columns(4)
-    features = [
+    for col, icon, title, desc in [
         (c1, "⚡", "Instant Results",  "CSV → insights in seconds"),
         (c2, "📊", "8 Live Charts",    "Interactive & filterable"),
         (c3, "🤖", "AI Analysis",      "Plain-English summaries"),
         (c4, "📥", "Excel Export",     "7-sheet detailed report"),
-    ]
-    for col, icon, title, desc in features:
+    ]:
         col.markdown(f"""
         <div class='kpi-card'>
             <div class='kpi-icon'>{icon}</div>
@@ -535,12 +369,12 @@ if st.session_state.df_clean is None:
         </div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.info("👈 Select **Use sample data** in the sidebar to explore instantly — no upload needed.")
+    st.info("👈 Select **Use sample data** in the sidebar to explore instantly.")
 
     col_l, col_r = st.columns(2)
     with col_l:
         st.markdown("""
-        <div class='glass-card'>
+        <div style='background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px'>
             <div style='font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:#E2E8F0;margin-bottom:14px'>
                 ✦ Works with any sales CSV
             </div>
@@ -563,18 +397,15 @@ else:
     df       = st.session_state.df_clean
     findings = st.session_state.findings
     summary  = st.session_state.get("df_summary", {})
+    margin   = findings.get("overall_margin_%", 0)
+    lift     = findings.get("campaign_lift_%", 0)
+    date_r   = summary.get("date_range", "N/A")
 
     # ── Welcome header ──
-    margin = findings.get("overall_margin_%", 0)
-    lift   = findings.get("campaign_lift_%", 0)
-    date_r = summary.get("date_range", "N/A")
-
     st.markdown(f"""
-    <div style='padding: 24px 0 8px'>
+    <div style='padding:24px 0 8px'>
         <p style='font-family:Syne,sans-serif;font-size:28px;font-weight:800;
-                  color:#F1F5F9;margin:0;letter-spacing:-0.02em'>
-            👋 Welcome back
-        </p>
+                  color:#F1F5F9;margin:0;letter-spacing:-0.02em'>👋 Welcome back</p>
         <div class='stat-strip'>
             <span class='stat-chip'>📁 {st.session_state.last_file_name}</span>
             <span class='stat-chip'>📋 {len(df):,} records</span>
@@ -592,7 +423,6 @@ else:
     k3.metric("📊 Margin",        f"{margin:.1f}%")
     k4.metric("🎯 Campaign %",    f"{findings.get('campaign_orders_%',0):.0f}%")
     k5.metric("📦 Campaign Lift", f"{lift:+.1f}%")
-
     st.divider()
 
     # ── Alerts ──
@@ -608,19 +438,23 @@ else:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Nav cards ──
-    st.markdown("<p style='font-family:Syne,sans-serif;font-size:16px;font-weight:700;color:#94A3B8;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px'>Explore</p>", unsafe_allow_html=True)
+    # ── Nav cards using st.page_link ──
+    st.markdown("<p style='font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:#4B5563;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px'>Explore</p>", unsafe_allow_html=True)
+
     n1, n2, n3, n4 = st.columns(4)
-    for col, icon, title, desc, href in [
-        (n1, "📊", "Dashboard",        "8 interactive charts",    "/01_dashboard"),
-        (n2, "🤖", "AI Insights",      "AI analysis + Q&A",       "/02_ai_insights"),
-        (n3, "💡", "Recommendations",  "6 ranked actions",        "/03_recommendations"),
-        (n4, "📥", "Export",           "Excel + CSV download",    "/04_export"),
-    ]:
-        col.markdown(f"""
-        <a href='{href}' style='text-decoration:none'>
-        <div class='nav-card'>
-            <div class='nav-icon'>{icon}</div>
-            <div class='nav-title'>{title}</div>
-            <div class='nav-desc'>{desc}</div>
-        </div></a>""", unsafe_allow_html=True)
+
+    with n1:
+        st.page_link("pages/01_dashboard.py", label="📊 Dashboard", use_container_width=True)
+        st.caption("8 interactive charts")
+
+    with n2:
+        st.page_link("pages/02_ai_insights.py", label="🤖 AI Insights", use_container_width=True)
+        st.caption("AI analysis + Q&A")
+
+    with n3:
+        st.page_link("pages/03_recommendations.py", label="💡 Recommendations", use_container_width=True)
+        st.caption("6 ranked actions")
+
+    with n4:
+        st.page_link("pages/04_export.py", label="📥 Export", use_container_width=True)
+        st.caption("Excel + CSV download")
